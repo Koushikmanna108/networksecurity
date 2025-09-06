@@ -7,5 +7,5 @@ seaborn
 certifi
 pymongo
 pymongo[srv]==3.12
-
+pyaml
 # -e .
