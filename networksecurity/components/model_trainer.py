@@ -20,6 +20,9 @@ from sklearn.ensemble import (
 )
 from sklearn.metrics import r2_score
 import mlflow
+import dagshub
+dagshub.init(repo_owner='Koushikmanna108', repo_name='networksecurity', mlflow=True)
+import tempfile
 
 
 class ModelTrainer:
@@ -32,16 +35,23 @@ class ModelTrainer:
             raise NetworkSecurityException(e,sys)
 
 
-    def track_mlflow(self,best_model,classificationmetric):
+    def track_mlflow(self, best_model, classificationmetric):
         with mlflow.start_run():
             f1_score = classificationmetric.f1_score
             precision_score = classificationmetric.precision_score
             recall_score = classificationmetric.recall_score
 
-            mlflow.log_metric("f1_score",f1_score)
-            mlflow.log_metric("precision_score",precision_score)
-            mlflow.log_metric("recall_score",recall_score)
-            mlflow.sklearn.log_model(best_model,"model")
+            mlflow.log_metric("f1_score", f1_score)
+            mlflow.log_metric("precision_score", precision_score)
+            mlflow.log_metric("recall_score", recall_score)
+
+            # Save model locally first
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                model_path = os.path.join(tmp_dir, "model")
+                mlflow.sklearn.save_model(best_model, model_path)
+
+                # Log the directory as an artifact instead of using log_model
+                mlflow.log_artifacts(model_path, artifact_path="model")
 
 
     def train_model(self, x_train, y_train, x_test, y_test):
@@ -102,7 +112,8 @@ class ModelTrainer:
         os.makedirs(model_dir_path,exist_ok=True)
 
         Network_Model = NetworkModel(preprocessor=preprocessor, model=best_model)
-        save_object(self.model_trainer_config.trained_model_file_path, obj=NetworkModel)
+        save_object(self.model_trainer_config.trained_model_file_path, obj=Network_Model)
+        save_object("final_model/model.pkl",best_model)
 
         model_trainer_artifact = ModelTrainerArtifact(
             trained_model_file_path=self.model_trainer_config.trained_model_file_path,
