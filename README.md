@@ -67,12 +67,6 @@ conda activate venv/ # On Windows
 pip install -r requirements.txt
 ```
 
-### 4. Set up MongoDB connection
-Create a .env file in the root directory:
-```
-MONGODB_URL=mongodb+srv://kmanna713:Koushik642005@cluster0.uf4ybca.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/
-```
-
 ## 🚀 Running the Application
 ### Start FastAPI Server
 ```

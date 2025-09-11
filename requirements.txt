@@ -13,6 +13,9 @@ dagshub
 fastapi
 uvicorn
 python-multipart
-tldextract
+tldextract  
 bs4
+python-whois
+dnspython
+beautifulsoup4
 # -e .
