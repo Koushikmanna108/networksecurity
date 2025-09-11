@@ -3,6 +3,21 @@ import sys
 
 from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.logging.logger import logging
+
+
+# Only import dagshub when not on Render
+if os.getenv("RENDER") != "true":
+    try:
+        import dagshub
+        dagshub.init(repo_owner='Koushikmanna108',
+                     repo_name='networksecurity',
+                     mlflow=True)
+        logging.info("Dagshub initialized successfully.")
+    except Exception as e:
+        logging.warning(f"Dagshub init skipped due to error: {e}")
+else:
+    logging.info("Skipping Dagshub init on Render environment.")
+
 from networksecurity.entity.artifact_entity import DataTransformationArtifact, ModelTrainerArtifact
 from networksecurity.entity.config_entity import ModelTrainerConfig
 from networksecurity.utils.main_utils.utils import (
