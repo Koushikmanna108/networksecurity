@@ -36,7 +36,31 @@ from sklearn.ensemble import (
 from sklearn.metrics import r2_score
 import mlflow
 import dagshub
-dagshub.init(repo_owner='Koushikmanna108', repo_name='networksecurity', mlflow=True)
+try:
+    import dagshub
+
+    if os.getenv("RENDER") == "true":
+        # On Render: use token auth if available
+        dag_user = os.getenv("DAGSHUB_USER")
+        dag_token = os.getenv("DAGSHUB_TOKEN")
+
+        if dag_user and dag_token:
+            dagshub.auth.add_app_token(username=dag_user, token=dag_token)
+            dagshub.init(repo_owner="Koushikmanna108",
+                         repo_name="networksecurity",
+                         mlflow=True)
+            logging.info("Dagshub initialized on Render with token auth.")
+        else:
+            logging.info("Skipping Dagshub on Render (no token provided).")
+    else:
+        # Local dev: normal init (OAuth works here)
+        dagshub.init(repo_owner="Koushikmanna108",
+                     repo_name="networksecurity",
+                     mlflow=True)
+        logging.info("Dagshub initialized locally.")
+
+except Exception as e:
+    logging.warning(f"Dagshub init skipped due to error: {e}")
 import tempfile
 
 

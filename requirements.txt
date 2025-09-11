@@ -8,7 +8,7 @@ certifi
 pymongo
 pymongo[srv]==3.12
 pyaml
-mlflow
+mlflow==2.22.1
 dagshub
 fastapi
 uvicorn
